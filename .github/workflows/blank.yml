@@ -4,11 +4,13 @@ name: CI
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+    types: 
+      - opened
+      - synchronize
+      - reopened
+      - closed
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -32,6 +34,10 @@ jobs:
         run: echo $JSON
         env:
           JSON: ${{ toJSON(github) }}
+
+      - name: Only run on merge
+        if: github.event.pull_request.merged == true
+        run: echo "This is a merged action run!"
 
       - name: Set Output
         id: world
