@@ -46,7 +46,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            console.log(context)
+            //console.log(context)
+            console.log(context.repo)
 
             //github.rest.pulls.update({
             //  owner: context.repo.owner,
