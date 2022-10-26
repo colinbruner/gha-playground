@@ -46,16 +46,14 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            console.log("Repo: "+context.repo.repo)
-            console.log("Repo Owner: "+context.repo.owner)
-            console.log("PR: "+context.payload.pull_request)
+            console.log(context)
 
-            github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
-              title: "${{ steps.world.outputs.issue }}: " + context.payload.pull_request.title
-            });
+            //github.rest.pulls.update({
+            //  owner: context.repo.owner,
+            //  repo: context.repo.repo,
+            //  pull_number: context.payload.pull_request.number
+            //  title: "${{ steps.world.outputs.issue }}: " + context.payload.pull_request.title
+            //});
 
       - name: Only run on merge
         if: github.event.pull_request.merged == true
