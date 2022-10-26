@@ -4,9 +4,14 @@ name: CI
 
 # Controls when the workflow will run
 on:
+  push:
+    branches: [ "testing" ]
   pull_request:
     branches: [ "main" ]
     types: 
+      - opened
+      - synchronize
+      - reopened
       - closed
 
   # Allows you to run this workflow manually from the Actions tab
@@ -32,14 +37,26 @@ jobs:
         env:
           JSON: ${{ toJSON(github) }}
 
+      - name: Set Output
+        id: world
+        run: |
+          echo "issue=JIRA-123" >> $GITHUB_OUTPUT
+
+      - name: Update Pull Request Title
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+              title: ${{ steps.world.outputs.issue }}: context.payload.pull_request.title
+            });
+
       - name: Only run on merge
         if: github.event.pull_request.merged == true
         run: echo "This is a merged action run!"
 
-      - name: Set Output
-        id: world
-        run: |
-          echo "test=world-test-secret-value" >> $GITHUB_OUTPUT
 
   deploy:
     runs-on: ubuntu-latest
