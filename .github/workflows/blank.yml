@@ -46,13 +46,11 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            //title: "${{ steps.world.outputs.issue }}: " + context.payload.pull_request.title
             github.rest.pulls.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number,
-              debug: true,
-              title: "This is a new title!"
+              title: "${{ steps.world.outputs.issue }}: " + context.payload.pull_request.title
             });
 
       - name: Only run on merge
