@@ -46,16 +46,18 @@ jobs:
           JSON: ${{ toJSON(github) }}
 
       - name: Create Ticket
-        if: "${{ !startsWith(github.event.pull_request.title, inputs.project) }}"
+        if: "${{ !startsWith(github.event.pull_request.title, "JIRA") }}"
         id: create
         run: |
           echo "issue=JIRA-123" >> $GITHUB_OUTPUT
 
       - name: Print Ticket
+        if: "${{ !startsWith(github.event.pull_request.title, "JIRA") }}"
         run: |
           echo "Ticket ${{ steps.create.outputs.issue }} was created"
 
       - name: Update Pull Request Title
+        if: "${{ !startsWith(github.event.pull_request.title, "JIRA") }}"
         uses: actions/github-script@v6
         with:
           script: |
