@@ -60,16 +60,16 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              labels: ["jira-ticket-created"]
+              labels: ["Ticket Auto Created"]
             });
 
       - name: Print Ticket
-        if: "${{ !startsWith(github.event.pull_request.title, 'JIRA') }}"
+        if: steps.create.outputs.exit_code == 0
         run: |
           echo "Ticket ${{ steps.create.outputs.issue }} was created"
 
       - name: Update Pull Request Title
-        if: "${{ contains(github.event.pull_request.labels, 'jira-ticket-created') }}"
+        if: steps.create.outputs.exit_code == 0
         uses: actions/github-script@v6
         with:
           script: |
@@ -89,7 +89,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Close Ticket
-        run: echo "Executes close-ticket workflow on ticket merge only"
+        if: "${{ contains(github.event.pull_request.labels.*.name, 'Ticket Auto Created') }}"
+        run: echo "Executes close-ticket workflow on ticket merge and when 'Ticket Auto Created' label found on PR."
 
   #deploy:
   #  runs-on: ubuntu-latest
