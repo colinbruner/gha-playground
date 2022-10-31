@@ -51,13 +51,25 @@ jobs:
         run: |
           echo "issue=JIRA-123" >> $GITHUB_OUTPUT
 
+      - name: Add Label to PR when ticket created
+        if: steps.create.outputs.exit_code == 0
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: ["jira-ticket-created"]
+            });
+
       - name: Print Ticket
         if: "${{ !startsWith(github.event.pull_request.title, 'JIRA') }}"
         run: |
           echo "Ticket ${{ steps.create.outputs.issue }} was created"
 
       - name: Update Pull Request Title
-        if: "${{ !startsWith(github.event.pull_request.title, 'JIRA') }}"
+        if: "${{ contains(github.event.pull_request.labels, 'jira-ticket-created') }}"
         uses: actions/github-script@v6
         with:
           script: |
